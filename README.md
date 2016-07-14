@@ -2,11 +2,13 @@
 
 **FIXME: Work in progress**
 
+## Introduction
+
 The purpose of this PoC is to bootstrap a completely dockerized environment that can be used to execute Data Science workloads in a Big Data ecosystem. The environment wraps components like Apache Spark, Apache Flink, Hive, HDFS etc.
 
 This repo uses outstanding work done by the folks from [Big Data Europe](https://github.com/big-data-europe/docker-hadoop-spark-workbench.git) and others.
 
-## Quickstart: Docker compose
+## Usage examples
 
 Below is a sequence of commands to bring up the complete environment using `docker-compose`. This neat tool comes installed by default in Docker for Mac and Windows. Linux users install it from here: <https://docs.docker.com/compose/install/>.
 
@@ -46,8 +48,6 @@ Removing namenode ... done
 - Apache Spark
 - Apache Flink
 - Hadoop HDFS
-
-## Example: Zeppelin Workbook
 
 ## Rancher
 
