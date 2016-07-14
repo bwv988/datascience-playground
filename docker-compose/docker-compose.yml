@@ -1,0 +1,59 @@
+version: '2'
+services:
+    namenode:
+      image: bwv988/hadoop-namenode
+      container_name: namenode
+      volumes:
+        - ./data/namenode:/hadoop/dfs/name
+      environment:
+        - CLUSTER_NAME=test
+      env_file:
+        - ./hadoop.env
+      ports:
+        - "50070:50070"
+        - "8020:8020"
+
+    datanode1:
+      image: bwv988/hadoop-datanode
+      container_name: datanode1
+      volumes:
+        - ./data/datanode1:/hadoop/dfs/data
+      env_file:
+        - ./hadoop.env
+
+    spark-master:
+      image: bwv988/hadoop-spark-master
+      container_name: spark-master
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+        - SPARK_CONF_spark_eventLog_enabled=true
+        - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
+        - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+      env_file:
+        - ./hadoop.env
+      ports:
+          - "8080:8080"
+
+    spark-worker:
+      image: bwv988/hadoop-spark-worker
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+        - SPARK_CONF_spark_eventLog_enabled=true
+        - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
+        - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+        - SPARK_MASTER_URL=spark://spark-master:7077
+      env_file:
+        - ./hadoop.env
+
+    hive:
+        image: bwv988/hadoop-hive
+        depends_on:
+            - namenode
+            - datanode1
+        container_name: hive
+        volumes:
+            - ./data/hive:/hive-metastore
+        env_file:
+            - ./hadoop.env
