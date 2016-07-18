@@ -16,7 +16,7 @@ services:
       image: bwv988/hadoop-namenode
       container_name: namenode
       volumes:
-        - ./data/namenode:/hadoop/dfs/name
+        - ~/datascience-cluster/hadoop/namenode:/hadoop/dfs/name
       environment:
         - CLUSTER_NAME=test
       env_file:
@@ -31,7 +31,7 @@ services:
       depends_on:
           - namenode
       volumes:
-        - ./data/datanode1:/hadoop/dfs/data
+        - ~/datascience-cluster/hadoop/datanode1:/hadoop/dfs/data
       env_file:
         - ./hadoop.env
 
@@ -47,7 +47,9 @@ services:
       env_file:
         - ./hadoop.env
       ports:
-          - "8080:8080"
+        - "8080:8080"
+      volumes:
+        - ~/datascience-cluster/spark:/spark-scratch
 
     spark-worker:
       image: bwv988/hadoop-spark-worker
@@ -62,6 +64,8 @@ services:
         - SPARK_MASTER_URL=spark://spark-master:7077
       env_file:
         - ./hadoop.env
+      volumes_from:
+        - spark-master
 
     hive:
       image: bwv988/hadoop-hive
@@ -72,3 +76,6 @@ services:
       ports:
         - "10000:10000"
         - "10002:10002"
+
+volumes:
+    spark-master:
