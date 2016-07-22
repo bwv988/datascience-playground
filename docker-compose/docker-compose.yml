@@ -1,19 +1,19 @@
 version: '2'
 services:
     zookeeper:
-      image: bwv988/zookeeper
+      image: analytics/docker-zookeeper
       container_name: zookeeper
       ports:
         - "2181:2181"
 
     postgres:
-      image: bwv988/postgres-hive
+      image: analytics/postgres-hive
       container_name: postgres
       ports:
         - "5432:5432"
 
     namenode:
-      image: bwv988/hadoop-namenode
+      image: analytics/hadoop-namenode
       container_name: namenode
       volumes:
         - ~/datascience-cluster/hadoop/namenode:/hadoop/dfs/name
@@ -26,7 +26,7 @@ services:
         - "8020:8020"
 
     datanode1:
-      image: bwv988/hadoop-datanode
+      image: analytics/hadoop-datanode
       container_name: datanode1
       depends_on:
           - namenode
@@ -35,8 +35,28 @@ services:
       env_file:
         - ./hadoop.env
 
+    hive:
+      image: analytics/hadoop-hive
+      depends_on:
+        - zookeeper
+        - postgres
+        - namenode
+        - datanode1
+      container_name: hive
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+      env_file:
+        - ./hadoop.env
+      ports:
+        - "10000:10000"
+        - "10002:10002"
+      volumes:
+        - /opt/hive/lib
+        - /usr/share/java
+
     spark-master:
-      image: bwv988/hadoop-spark-master
+      image: analytics/hadoop-spark-master
       container_name: spark-master
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
@@ -48,11 +68,15 @@ services:
         - ./hadoop.env
       ports:
         - "8080:8080"
+      depends_on:
+        - hive
       volumes:
         - ~/datascience-cluster/spark:/spark-scratch
+      volumes_from:
+        - hive
 
     spark-worker:
-      image: bwv988/hadoop-spark-worker
+      image: analytics/hadoop-spark-worker
       depends_on:
           - spark-master
       environment:
@@ -67,15 +91,6 @@ services:
       volumes_from:
         - spark-master
 
-    hive:
-      image: bwv988/hadoop-hive
-      depends_on:
-        - zookeeper
-        - postgres
-      container_name: hive
-      ports:
-        - "10000:10000"
-        - "10002:10002"
-
 volumes:
     spark-master:
+    hive:
