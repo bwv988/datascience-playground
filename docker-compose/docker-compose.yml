@@ -90,7 +90,21 @@ services:
         - ./hadoop.env
       volumes_from:
         - spark-master
-
+    zeppelin:
+      image: analytics/docker-zeppelin
+      depends_on:
+        - namenode
+        - datanode1
+        - spark-master
+        - spark-worker
+      container_name: zeppelin
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+      env_file:
+        - ./hadoop.env
+      ports:
+        - "9090:9090"
 volumes:
     spark-master:
     hive:
