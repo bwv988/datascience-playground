@@ -10,12 +10,12 @@ This repo uses outstanding work done by the folks from [Big Data Europe](https:/
 
 ## Components
 
-- Apache Hive
-- Apache Zookeeper
 - Apache Spark
 - Apache Flink
-- Hadoop HDFS
+- Apache Hadoop
 - Apache Zeppelin
+- Apache Hive
+- Apache Zookeeper
 
 ## Docker Compose Usage Examples
 
@@ -97,4 +97,4 @@ metastore=#
 ## References
 
 - Big Data Europe main GitHub repo: <https://github.com/big-data-europe?page=1>
-- Spark containers:
+- Work done by <https://github.com/earthquakesan>
