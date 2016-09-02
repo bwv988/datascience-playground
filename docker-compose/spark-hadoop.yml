@@ -7,12 +7,12 @@ services:
     hostname: namenode
     container_name: namenode
     volumes:
-      - ./data/namenode:/hadoop/dfs/name
-      - ./data/exchange:/exchange
+      - ~/datascience-cluster/hadoop/namenode:/hadoop/dfs/name
+      - ~/datascience-cluster/hadoop/exchange:/exchange
     environment:
       - CLUSTER_NAME=test
     env_file:
-      - ../hadoop.env
+      - env/hadoop.env
     ports:
       - "50070:50070"
       - "8020:8020"
@@ -21,9 +21,9 @@ services:
     image: analytics/hadoop-datanode
     hostname: datanode1
     volumes:
-      - ../data/datanode1:/hadoop/dfs/data
+      - ~/datascience-cluster/hadoop/datanode1:/hadoop/dfs/data
     env_file:
-      - ../hadoop.env
+      - env/hadoop.env
     depends_on:
       - namenode
 
@@ -38,9 +38,9 @@ services:
       - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
       - SPARK_CONF_spark_eventLog_enabled=true
       - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
-      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs    
+      - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
     env_file:
-      - ../hadoop.env
+      - env/hadoop.env
     ports:
       - "8080:8080"
     volumes:
@@ -58,6 +58,6 @@ services:
       - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
       - SPARK_MASTER_URL=spark://spark-master:7077
     env_file:
-      - ../hadoop.env
+      - env/hadoop.env
     volumes_from:
       - spark-master

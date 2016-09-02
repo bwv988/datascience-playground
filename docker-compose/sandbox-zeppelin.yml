@@ -1,0 +1,111 @@
+version: '2'
+services:
+    zookeeper:
+      image: analytics/docker-zookeeper
+      container_name: zookeeper
+      ports:
+        - "2181:2181"
+
+    postgres:
+      image: analytics/postgres-hive
+      container_name: postgres
+      ports:
+        - "5432:5432"
+
+    namenode:
+      image: analytics/hadoop-namenode
+      container_name: namenode
+      volumes:
+        - ~/datascience-cluster/hadoop/namenode:/hadoop/dfs/name
+      environment:
+        - CLUSTER_NAME=test
+      env_file:
+        - env/hadoop.env
+      ports:
+        - "50070:50070"
+        - "8020:8020"
+
+    datanode1:
+      image: analytics/hadoop-datanode
+      container_name: datanode1
+      depends_on:
+          - namenode
+      volumes:
+        - ~/datascience-cluster/hadoop/datanode1:/hadoop/dfs/data
+      env_file:
+        - env/hadoop.env
+
+    hive:
+      image: analytics/hadoop-hive
+      depends_on:
+        - zookeeper
+        - postgres
+        - namenode
+        - datanode1
+      container_name: hive
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+      env_file:
+        - env/hadoop.env
+      ports:
+        - "10000:10000"
+        - "10002:10002"
+      volumes:
+        - /opt/hive/lib
+        - /usr/share/java
+
+    spark-master:
+      image: analytics/hadoop-spark-master
+      container_name: spark-master
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+        - SPARK_CONF_spark_eventLog_enabled=true
+        - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
+        - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+      env_file:
+        - env/hadoop.env
+      ports:
+        - "8080:8080"
+      depends_on:
+        - hive
+      volumes:
+        - ~/datascience-cluster/spark:/spark-scratch
+      volumes_from:
+        - hive
+
+    spark-worker:
+      image: analytics/hadoop-spark-worker
+      depends_on:
+          - spark-master
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+        - SPARK_CONF_spark_eventLog_enabled=true
+        - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
+        - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
+        - SPARK_MASTER_URL=spark://spark-master:7077
+      env_file:
+        - env/hadoop.env
+      volumes_from:
+        - spark-master
+
+    zeppelin:
+      image: analytics/docker-zeppelin
+      depends_on:
+        - namenode
+        - datanode1
+        - spark-master
+        - spark-worker
+      container_name: zeppelin
+      environment:
+        - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+        - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+      env_file:
+        - env/hadoop.env
+      ports:
+        - "9090:9090"
+volumes:
+    spark-master:
+    hive:

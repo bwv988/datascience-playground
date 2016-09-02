@@ -1,9 +1,7 @@
-# This is provided purely for testing purposes.
-
 version: '2'
 services:
     zookeeper:
-      image: analytics/zookeeper
+      image: analytics/docker-zookeeper
       container_name: zookeeper
       ports:
         - "2181:2181"
@@ -22,7 +20,7 @@ services:
       environment:
         - CLUSTER_NAME=test
       env_file:
-        - ./hadoop.env
+        - env/hadoop.env
       ports:
         - "50070:50070"
         - "8020:8020"
@@ -35,20 +33,29 @@ services:
       volumes:
         - ~/datascience-cluster/hadoop/datanode1:/hadoop/dfs/data
       env_file:
-        - ./hadoop.env
-
+        - env/hadoop.env
 
     hive:
       image: analytics/hadoop-hive
       depends_on:
         - zookeeper
         - postgres
+        - namenode
+        - datanode1
       container_name: hive
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
         - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
       env_file:
-        - ./hadoop.env
+        - env/hadoop.env
       ports:
         - "10000:10000"
         - "10002:10002"
+      volumes:
+        - /opt/hive/lib
+        - /usr/share/java
+
+     # FLINK
+volumes:
+    spark-master:
+    hive:
