@@ -1,6 +1,6 @@
 # A scalable, cloud-ready environment for Data Science using Docker
 
-**FIXME: Work in progress**
+**NOTE: This is work in progress.**
 
 ## Introduction
 
@@ -17,11 +17,11 @@ This repo uses outstanding work done by the folks from [Big Data Europe](https:/
 - Hadoop HDFS
 - Apache Zeppelin
 
-## Usage examples
+## Docker Compose Usage Examples
 
 This section contains some sample commands to launch various dockerized setups using `docker-compose`.
 
-### Spark sandbox
+### Spark Sandbox
 
 #### Starting / Stopping
 
@@ -39,18 +39,19 @@ docker exec namenode hadoop fs -mkdir /spark-logs
 docker exec -it spark-master spark-shell --master spark://spark-master:7077
 ```
 
-### Full sandbox
+#### Copying files to HDFS
 
-#### Starting / Stopping
+This can be achieved via the host volume which the docker container mounts:
 
 ```bash
-docker-compose up
-docker-compose stop && docker-compose rm
+docker exec namenode hadoop fs -ls /
+docker exec namenode hadoop fs -mkdir /tmp
+docker exec namenode hadoop fs -ls /
+echo "Hello world" > test.txt
+sudo mv test.txt ~/...FIXME...exchange/
+docker exec namenode hadoop fs -put /exchange/test.txt /tmp/test.txt
+./hadoop.sh fs -ls /tmp
 ```
-
-#### Misc
-
-...
 
 ### Hadoop, Hive and PostgreSQL metastore
 
