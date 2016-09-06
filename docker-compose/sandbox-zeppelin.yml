@@ -1,7 +1,9 @@
+# Docker compose file that runs Zeppelin + dockerized Big Data stack.
+
 version: '2'
 services:
     zookeeper:
-      image: analytics/docker-zookeeper
+      image: analytics/zookeeper
       container_name: zookeeper
       ports:
         - "2181:2181"
@@ -16,7 +18,7 @@ services:
       image: analytics/hadoop-namenode
       container_name: namenode
       volumes:
-        - ~/datascience-cluster/hadoop/namenode:/hadoop/dfs/name
+        - ~/datascience-sandbox/hadoop/namenode:/hadoop/dfs/name
       environment:
         - CLUSTER_NAME=test
       env_file:
@@ -31,7 +33,7 @@ services:
       depends_on:
           - namenode
       volumes:
-        - ~/datascience-cluster/hadoop/datanode1:/hadoop/dfs/data
+        - ~/datascience-sandbox/hadoop/datanode1:/hadoop/dfs/data
       env_file:
         - env/hadoop.env
 
@@ -56,7 +58,7 @@ services:
         - /usr/share/java
 
     spark-master:
-      image: analytics/hadoop-spark-master
+      image: analytics/ds-spark-master
       container_name: spark-master
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
@@ -71,12 +73,12 @@ services:
       depends_on:
         - hive
       volumes:
-        - ~/datascience-cluster/spark:/spark-scratch
+        - ~/datascience-sandbox/workdir:/workdir
       volumes_from:
         - hive
 
     spark-worker:
-      image: analytics/hadoop-spark-worker
+      image: analytics/ds-spark-worker
       depends_on:
           - spark-master
       environment:
@@ -102,10 +104,17 @@ services:
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
         - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+        - ZEPPELIN_CONF_MASTER=spark://spark-master:7077
       env_file:
         - env/hadoop.env
       ports:
         - "9090:9090"
+      volumes:
+        - ~/datascience-sandbox/zeppelin/notebook:/opt/zeppelin/notebook
+        - ~/datascience-sandbox/workdir/:/workdir
+      volumes_from:
+        - hive
+
 volumes:
     spark-master:
     hive:

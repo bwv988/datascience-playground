@@ -7,7 +7,7 @@ services:
       hostname: namenode
       container_name: namenode
       volumes:
-        - ~/datascience-cluster/hadoop/namenode:/hadoop/dfs/name
+        - ~/datascience-sandbox/hadoop/namenode:/hadoop/dfs/name
       environment:
         - CLUSTER_NAME=test
       env_file:
@@ -28,7 +28,7 @@ services:
       hostname: historyserver
       container_name: historyserver
       volumes:
-        - ~/datascience-cluster/hadoop/historyserver:/hadoop/yarn/timeline
+        - ~/datascience-sandbox/hadoop/historyserver:/hadoop/yarn/timeline
       env_file:
         - env/hadoop.env
 
@@ -44,7 +44,7 @@ services:
       hostname: datanode1
       container_name: datanode1
       volumes:
-        - ~/datascience-cluster/hadoop/datanode1:/hadoop/dfs/data
+        - ~/datascience-sandbox/hadoop/datanode1:/hadoop/dfs/data
       env_file:
         - env/hadoop.env
 
@@ -53,7 +53,7 @@ services:
       hostname: datanode2
       container_name: datanode2
       volumes:
-        - ~/datascience-cluster/hadoop/datanode2:/hadoop/dfs/data
+        - ~/datascience-sandbox/hadoop/datanode2:/hadoop/dfs/data
       env_file:
         - env/hadoop.env
 
@@ -62,6 +62,6 @@ services:
       hostname: datanode3
       container_name: datanode3
       volumes:
-        - ~/datascience-cluster/hadoop/datanode3:/hadoop/dfs/data
+        - ~/datascience-sandbox/hadoop/datanode3:/hadoop/dfs/data
       env_file:
         - env/hadoop.env

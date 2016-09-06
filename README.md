@@ -21,6 +21,38 @@ This repo uses outstanding work done by the folks from [Big Data Europe](https:/
 
 This section contains some sample commands to launch various dockerized setups using `docker-compose`.
 
+### Apache Zeppelin Sandbox
+
+This is for running interactive Data Science experiments using Zeppelin and Spark.
+
+#### Starting / Stopping
+
+```bash
+docker-compose -f sandbox-zeppelin.yml up
+docker-compose -f sandbox-zeppelin.yml stop && docker-compose -f sandbox-zeppelin.yml rm
+```
+
+#### Link Zeppelin with Hive
+
+In order to access Hive from Zeppelin, some properties and dependencies have to be configured in the JDBC interpreter group.
+
+The below is currently a work-around to inject Hive-related config into Zeppelin **after** it has been started, by PUTting config details into the Zeppelin's interpreter REST API.
+
+So, after the sandbox has fully started and Zeppelin is up and running, execute the following commands:
+
+```bash
+docker exec -it zeppelin bash
+/entrypoints/inject_hive_cfg.py
+```
+
+#### Troubleshooting
+
+Investigate issues by running a shell into the container:
+
+```bash
+docker exec -it zeppelin bash
+```
+
 ### Spark Sandbox
 
 #### Starting / Stopping
