@@ -3,19 +3,19 @@
 version: '2'
 services:
     zookeeper:
-      image: analytics/zookeeper
+      image: bwv988/zookeeper
       container_name: zookeeper
       ports:
         - "2181:2181"
 
     postgres:
-      image: analytics/postgres-hive
+      image: bwv988/postgres-hive
       container_name: postgres
       ports:
         - "5432:5432"
 
     namenode:
-      image: analytics/hadoop-namenode
+      image: bwv988/hadoop-namenode
       container_name: namenode
       volumes:
         - ~/datascience-sandbox/hadoop/namenode:/hadoop/dfs/name
@@ -28,7 +28,7 @@ services:
         - "8020:8020"
 
     datanode1:
-      image: analytics/hadoop-datanode
+      image: bwv988/hadoop-datanode
       container_name: datanode1
       depends_on:
           - namenode
@@ -38,7 +38,7 @@ services:
         - env/hadoop.env
 
     hive:
-      image: analytics/hadoop-hive
+      image: bwv988/hadoop-hive
       depends_on:
         - zookeeper
         - postgres
@@ -58,7 +58,7 @@ services:
         - /usr/share/java
 
     spark-master:
-      image: analytics/ds-spark-master
+      image: bwv988/ds-spark-master
       container_name: spark-master
       environment:
         - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
@@ -78,7 +78,7 @@ services:
         - hive
 
     spark-worker:
-      image: analytics/ds-spark-worker
+      image: bwv988/ds-spark-worker
       depends_on:
           - spark-master
       environment:
@@ -94,7 +94,7 @@ services:
         - spark-master
 
     zeppelin:
-      image: analytics/docker-zeppelin
+      image: bwv988/docker-zeppelin
       depends_on:
         - namenode
         - datanode1
