@@ -1,12 +1,23 @@
-# Docker compose file that runs Zeppelin + dockerized Big Data stack.
+# Docker compose file that runs Zeppelin + dockerized Big Data stack, including Kafka.
+# Using the official Kafka images from Confluent Inc.
 
 version: '2'
 services:
     zookeeper:
-      image: bwv988/zookeeper
-      container_name: zookeeper
-      ports:
-        - "2181:2181"
+      image: confluentinc/cp-zookeeper:3.0.1
+      environment:
+        ZOOKEEPER_CLIENT_PORT: 32181
+        ZOOKEEPER_TICK_TIME: 2000
+
+    kafka:
+      image: confluentinc/cp-kafka:3.0.1
+      network_mode: host
+      depends_on:
+        - zookeeper
+      environment:
+        KAFKA_BROKER_ID: 1
+        KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://zookeeper:29092
 
     postgres:
       image: bwv988/postgres-hive
@@ -19,7 +30,6 @@ services:
       container_name: namenode
       volumes:
         - ~/datascience-sandbox/hadoop/namenode:/hadoop/dfs/name
-        - ~/datascience-sandbox/workdir:/workdir
       environment:
         - CLUSTER_NAME=test
       env_file:
