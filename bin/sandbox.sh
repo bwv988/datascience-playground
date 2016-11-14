@@ -5,21 +5,21 @@
 # FIXME: Dependency on LSB.
 . /lib/lsb/init-functions
 
-FLAVOR="Zeppelin + Jupyter Data Science Sandbox"
-COMPOSE_ROOT=".."
+FLAVOR="Zeppelin + Jupyter Docker Data Science Sandbox"
+COMPOSE_ROOT="docker-compose"
 COMPOSE_FILE="sandbox-zeppelin-jupyter.yml"
-DOCKER_START_CMD="docker-compose -f ${COMPOSE_ROOT}/${COMPOSE_FILE} up"
-DOCKER_STOP_CMD="docker-compose -f ${COMPOSE_ROOT}/${COMPOSE_FILE} down"
+COMPOSE_PATH="${COMPOSE_ROOT}/${COMPOSE_FILE}"
+COMPOSE_CMD="docker-compose -f ${COMPOSE_PATH}"
 
 case "$1" in
   start)
     log_begin_msg "Starting ${FLAVOR}..."
-    exec ${DOCKER_START_CMD}
+    exec ${COMPOSE_CMD} up
     log_end_msg $?
     ;;
   stop)
     log_begin_msg "Stopping ${FLAVOR}..."
-    exec ${DOCKER_STOP_CMD}
+    exec ${COMPOSE_CMD} down
     log_end_msg $?
     ;;
   *)

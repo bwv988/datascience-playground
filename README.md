@@ -1,25 +1,50 @@
 # A scalable, cloud-ready environment for Data Science using Docker
 
-**NOTE: This is work in progress.**
+**NOTE**: This repo is purely for experimentation and does not intend to provide production-grade containers.
 
 ## Introduction
 
-The purpose of this repo is to bootstrap a completely dockerized environment that can be used to execute Data Science workloads in a Big Data ecosystem. The environment wraps components like Apache Spark, Apache Flink, Hive, Hadoop filesystem etc.
+This repo provides a set of files to quickly bootstrap a fully dockerized environment for doing Data Science using distributed Big Data components like Apache Spark.
+
+All containers are available to be pulled from the central Docker hub.
 
 This repo uses outstanding work done by the folks from [Big Data Europe](https://github.com/big-data-europe/docker-hadoop-spark-workbench.git) and others.
 
+## Quickstart
+
+### Starting
+
+```bash
+cd datascience-docker-sandbox
+bin/sandbox.sh start
+```
+
+### Stopping
+
+```bash
+cd datascience-docker-sandbox
+bin/sandbox.sh stop
+```
+
 ## Components
 
-- Apache Spark
-- Apache Flink
+- Apache Spark + PySpark + R + other libs
 - Apache Hadoop
 - Apache Zeppelin
 - Apache Hive
 - Apache Zookeeper
+- Jupyter
+
+## Planned
+
+- Apache Flink
+- Sparkling Water
+- More libs
+- Support for Rancher, Docker Swarm and Kubernetes
 
 ## Docker Compose Usage Examples
 
-This section contains some sample commands to launch various dockerized setups using `docker-compose`.
+This section shows commands to launch various dockerized setups using `docker-compose`.
 
 ### Apache Zeppelin Sandbox
 
@@ -29,25 +54,26 @@ This is for running interactive Data Science experiments using Zeppelin and Spar
 
 ```bash
 docker-compose -f sandbox-zeppelin.yml up
-docker-compose -f sandbox-zeppelin.yml stop && docker-compose -f sandbox-zeppelin.yml rm
+
+docker-compose -f sandbox-zeppelin.yml down
 ```
 
-#### Link Zeppelin with Hive
+### Link Zeppelin with Hive
 
 In order to access Hive from Zeppelin, some properties and dependencies have to be configured in the JDBC interpreter group.
 
 The below is currently a work-around to inject Hive-related config into Zeppelin **after** it has been started, by PUTting config details into the Zeppelin's interpreter REST API.
 
-So, after the sandbox has fully started and Zeppelin is up and running, execute the following commands:
+So, after the sandbox has fully started and Zeppelin is up and running, execute the following command:
 
 ```bash
 docker exec -it zeppelin bash
 /entrypoints/inject_hive_cfg.py
 ```
 
-#### Troubleshooting
+### Troubleshooting
 
-Investigate issues by running a shell into the container:
+Investigate issues by running a shell in a container, e.g.:
 
 ```bash
 docker exec -it zeppelin bash
@@ -60,8 +86,7 @@ docker exec -it zeppelin bash
 ```bash
 docker-compose -f sandbox-spark.yml up
 
-docker-compose -f sandbox-spark.yml stop && docker-compose -f sandbox-spark.yml rm
-fs -mkdir /spark-logs
+docker-compose -f sandbox-spark.yml down
 ```
 
 #### Spark Shell
@@ -86,13 +111,6 @@ docker exec namenode hadoop fs -put /exchange/test.txt /tmp/test.txt
 ```
 
 ### Hadoop, Hive and PostgreSQL metastore
-
-#### Starting / Stopping
-
-```bash
-docker-compose -f hadoop-hive.yml up
-docker-compose -f hadoop-hive.yml stop && docker-compose -f hadoop-hive.yml rm
-```
 
 #### Beeline CLI
 
@@ -120,11 +138,17 @@ metastore=# select * from "VERSION";
 metastore=#
 ```
 
-## Rancher
+## Deploy into AWS via Rancher
 
-## Docker Swarm
+TBD
 
-## Kubernetes
+## Deploy into AWS via Docker Swarm
+
+TBD
+
+## Deploy using Kubernetes
+
+TBD
 
 ## References
 
