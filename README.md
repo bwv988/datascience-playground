@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repo provides a set of files to quickly bootstrap a fully dockerized environment for doing Data Science using distributed Big Data components like Apache Spark.
+This repoitory provides a set of files to quickly bootstrap a fully dockerized environment for doing Data Science using distributed Big Data components like Apache Spark.
 
 All containers are available to be pulled from the central Docker hub.
 
