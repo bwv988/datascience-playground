@@ -1,28 +1,36 @@
-# A scalable, cloud-ready environment for Data Science using Docker
+# A playground for Data Science with Spark, R, Zeppelin and Docker
 
 **NOTE**: This repo is purely for experimentation and does not intend to provide production-grade containers.
 
 ## Introduction
 
-This repoitory provides a set of files to quickly bootstrap a fully dockerized environment for doing Data Science using distributed Big Data components like Apache Spark.
+This present repo provides a set of files to quickly bootstrap a fully dockerized environment for doing Data Science on top of distributed Big Data components, like Apache Spark.
 
-All containers are available to be pulled from the central Docker hub.
+All docker images are available to be pulled from the central Docker hub.
 
-This repo uses outstanding work done by the folks from [Big Data Europe](https://github.com/big-data-europe/docker-hadoop-spark-workbench.git) and others.
+## Requirements
 
-## Quickstart
+- [Docker](https://www.docker.com/) installed & configured for your system (Windows / macOS / Linux).
+- [Docker compose](https://docs.docker.com/compose/overview/) installed.
+- Recent version of `bash`. This is for accessing the aliases.
+
+## Quickstart: Full environment
 
 ### Starting
 
+The below starts a full stack with Spark, Hadoop, Zeppelin, Jupyter, etc.
+
 ```bash
+git clone https://github.com/bwv988/datascience-docker-sandbox.git
+
 cd datascience-docker-sandbox
+
 bin/sandbox.sh start
 ```
 
 ### Stopping
 
 ```bash
-cd datascience-docker-sandbox
 bin/sandbox.sh stop
 ```
 
@@ -35,29 +43,6 @@ bin/sandbox.sh stop
 - Apache Zookeeper
 - Jupyter
 
-## Planned
-
-- Apache Flink
-- Sparkling Water
-- More libs
-- Support for Rancher, Docker Swarm and Kubernetes
-
-## Docker Compose Usage Examples
-
-This section shows commands to launch various dockerized setups using `docker-compose`.
-
-### Apache Zeppelin Sandbox
-
-This is for running interactive Data Science experiments using Zeppelin and Spark.
-
-#### Starting / Stopping
-
-```bash
-docker-compose -f sandbox-zeppelin.yml up
-
-docker-compose -f sandbox-zeppelin.yml down
-```
-
 ### Link Zeppelin with Hive
 
 In order to access Hive from Zeppelin, some properties and dependencies have to be configured in the JDBC interpreter group.
@@ -68,10 +53,11 @@ So, after the sandbox has fully started and Zeppelin is up and running, execute 
 
 ```bash
 docker exec -it zeppelin bash
+
 /entrypoints/inject_hive_cfg.py
 ```
 
-### Troubleshooting
+### General troubleshooting
 
 Investigate issues by running a shell in a container, e.g.:
 
@@ -79,54 +65,95 @@ Investigate issues by running a shell in a container, e.g.:
 docker exec -it zeppelin bash
 ```
 
-### Spark Sandbox
-
-#### Starting / Stopping
+Can also use `docker logs`:
 
 ```bash
-docker-compose -f sandbox-spark.yml up
-
-docker-compose -f sandbox-spark.yml down
+docker logs zeppelin
 ```
 
-#### Spark Shell
+## Spark + Hadoop environment
+
+### Starting
 
 ```bash
-docker exec namenode hadoop fs -mkdir /spark-logs
-docker exec -it spark-master spark-shell --master spark://spark-master:7077
+cd datascience-docker-sandbox
+
+bin/sandbox.sh spark start
 ```
 
-#### Copying files to HDFS
+### Verify containers are up and running
+
+```bash
+docker ps
+```
+
+### Stopping
+
+```bash
+bin/sandbox.sh spark start
+```
+
+## Usage examples
+
+For the subsequent examples I'll be making use of the aliases provided.
+
+### Launch Spark Shell
+
+This is handy for running some quick tests in Scala.
+
+```bash
+# First source the aliases definitions.
+source bin/aliases.sh
+
+hadoop fs -mkdir /spark-logs
+
+spark-shell
+```
+
+### Launch PySpark
+
+Same as above, only for PySpark.
+
+```bash
+pyspark
+```
+
+### Copying files to HDFS
 
 This can be achieved via the host volume which the docker container mounts:
 
 ```bash
-docker exec namenode hadoop fs -ls /
-docker exec namenode hadoop fs -mkdir /tmp
-docker exec namenode hadoop fs -ls /
+hadoop fs -ls /
+
+hadoop fs -mkdir /tmp
+
+hadoop fs -ls /
+
 echo "Hello world" > test.txt
-sudo mv test.txt ~/...FIXME...exchange/
-docker exec namenode hadoop fs -put /exchange/test.txt /tmp/test.txt
-./hadoop.sh fs -ls /tmp
+
+sudo mv test.txt ~/datascience-sandbox/workdir
+
+hadoop fs -put /workdir/test.txt /tmp/test.txt
+
+hadoop fs -ls /tmp
 ```
 
-### Hadoop, Hive and PostgreSQL metastore
-
-#### Beeline CLI
+### Acessing Beeline CLI
 
 Here is how to access Beeline and run SQL commands through the docker container:
 
 ```bash
-docker exec -it hive beeline
+beeline
 
 beeline> !connect jdbc:hive2://hive:10000 hiveuser hiveuser
-0: jdbc:hive2://hive:10000> show tables;
+0: jdbc:hive2://hive:10000> show tables
 ```
 
-#### Verify Hive Schema version in PostgreSQL metastore
+### Verify Hive schema version in PostgreSQL metastore
 
 ```bash
 docker exec -it postgres psql -U postgres
+
 postgres=# \c metastore
 You are now connected to database "metastore" as user "postgres".
 metastore=# select * from "VERSION";

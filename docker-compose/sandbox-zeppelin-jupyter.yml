@@ -114,7 +114,7 @@ services:
         - datanode1
         - spark-master
         - spark-worker
-      container_name: jupyter          
+      container_name: jupyter
       env_file:
         - env/hadoop.env
       ports:

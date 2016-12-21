@@ -17,6 +17,7 @@ services:
       container_name: namenode
       volumes:
         - ~/datascience-sandbox/hadoop/namenode:/hadoop/dfs/name
+        - ~/datascience-sandbox/workdir:/workdir
       environment:
         - CLUSTER_NAME=test
       env_file:
@@ -53,9 +54,9 @@ services:
         - /usr/share/java
 
     spark-master:
-      image: bwv988/spark-master
+      image: bwv988/ds-spark-master
       container_name: spark-master
-      environment:      
+      environment:
         - SPARK_CONF_spark_eventLog_enabled=true
         - SPARK_CONF_spark_eventLog_dir=hdfs://namenode:8020/spark-logs
         - SPARK_CONF_spark_history_fs_logDirectory=hdfs://namenode:8020/spark-logs
@@ -71,7 +72,7 @@ services:
         - hive
 
     spark-worker:
-      image: bwv988/spark-worker
+      image: bwv988/ds-spark-worker
       depends_on:
           - spark-master
       environment:
