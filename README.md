@@ -105,6 +105,7 @@ This is handy for running some quick tests in Scala.
 # First source the aliases definitions.
 source bin/aliases.sh
 
+# Create spark logs dir in HDFS or we get an exception.
 hadoop fs -mkdir /spark-logs
 
 spark-shell
@@ -115,6 +116,8 @@ spark-shell
 Same as above, only for PySpark.
 
 ```bash
+hadoop fs -mkdir /spark-logs
+
 pyspark
 ```
 
