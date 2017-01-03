@@ -1,20 +1,22 @@
 #!/bin/bash
+# Quick script to interact with the playground env.
+
 # FIXME: This needs further work and documentation.
 
 # Get lsb functions
-# FIXME: Dependency on LSB.
+# FIXME: Dependency on LSB. Doesn't work on Windows, should be removed.
 . /lib/lsb/init-functions
 
 
 COMPOSE_ROOT="docker-compose"
 
 function usage {
-echo -e "\n\nUsage: ./sandbox <FLAVOUR> <ACTION>
+echo -e "\n\nUsage: ./playground <FLAVOUR> <ACTION>
 
 FLAVOUR:  {ds (default), spark}
 ACTION    {start, stop}
 
-Example: ./sandbox start\n"
+Example: ./playground start\n"
 
 exit
 }
@@ -36,12 +38,12 @@ fi
 
 case "$flavour" in
   ds)
-    FLAVOR_MSG="Zeppelin + Jupyter Docker Data Science Sandbox"
-    COMPOSE_FILE="sandbox-zeppelin-jupyter.yml"
+    FLAVOR_MSG="Zeppelin + Jupyter + big data stack"
+    COMPOSE_FILE="playground-zeppelin-jupyter.yml"
     ;;
   spark)
     FLAVOR_MSG="Spark + Hive + Hadoop"
-    COMPOSE_FILE="sandbox-spark.yml"
+    COMPOSE_FILE="playground-spark.yml"
     ;;
   *)
     echo "Unknown flavour: $flavour, exiting."

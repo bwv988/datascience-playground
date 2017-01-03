@@ -16,8 +16,8 @@ services:
       image: bwv988/hadoop-namenode
       container_name: namenode
       volumes:
-        - ~/datascience-sandbox/hadoop/namenode:/hadoop/dfs/name
-        - ~/datascience-sandbox/workdir:/workdir
+        - ~/ds-playground/hadoop/namenode:/hadoop/dfs/name
+        - ~/ds-playground/workdir:/workdir
       environment:
         - CLUSTER_NAME=test
       env_file:
@@ -32,7 +32,7 @@ services:
       depends_on:
           - namenode
       volumes:
-        - ~/datascience-sandbox/hadoop/datanode1:/hadoop/dfs/data
+        - ~/ds-playground/hadoop/datanode1:/hadoop/dfs/data
       env_file:
         - env/hadoop.env
 
@@ -67,7 +67,7 @@ services:
       depends_on:
         - hive
       volumes:
-        - ~/datascience-sandbox/workdir/:/workdir
+        - ~/ds-playground/workdir/:/workdir
       volumes_from:
         - hive
 

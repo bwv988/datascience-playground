@@ -12,7 +12,7 @@ All docker images are available to be pulled from the central Docker hub.
 
 - [Docker](https://www.docker.com/) installed & configured for your system (Windows / macOS / Linux).
 - [Docker compose](https://docs.docker.com/compose/overview/) installed.
-- Recent version of `bash`. This is for accessing the aliases.
+- Recent version of `bash`. This is for using the aliases. On Windows, Cygwin or another alternative may be used.
 
 ## Quickstart: Full environment
 
@@ -21,17 +21,16 @@ All docker images are available to be pulled from the central Docker hub.
 The below starts a full stack with Spark, Hadoop, Zeppelin, Jupyter, etc.
 
 ```bash
-git clone https://github.com/bwv988/datascience-docker-sandbox.git
+git clone https://github.com/bwv988/datascience-playground.git
+cd datascience-playground
 
-cd datascience-docker-sandbox
-
-bin/sandbox.sh start
+bin/playground.sh start
 ```
 
 ### Stopping
 
 ```bash
-bin/sandbox.sh stop
+bin/playground.sh stop
 ```
 
 ## Components
@@ -49,7 +48,7 @@ In order to access Hive from Zeppelin, some properties and dependencies have to 
 
 The below is currently a work-around to inject Hive-related config into Zeppelin **after** it has been started, by PUTting config details into the Zeppelin's interpreter REST API.
 
-So, after the sandbox has fully started and Zeppelin is up and running, execute the following command:
+So, after the playground has fully started and Zeppelin is up and running, execute the following command:
 
 ```bash
 docker exec -it zeppelin bash
@@ -65,7 +64,7 @@ Investigate issues by running a shell in a container, e.g.:
 docker exec -it zeppelin bash
 ```
 
-Can also use `docker logs`:
+Inspect individual container logs by using the container name:
 
 ```bash
 docker logs zeppelin
@@ -76,9 +75,9 @@ docker logs zeppelin
 ### Starting
 
 ```bash
-cd datascience-docker-sandbox
+cd datascience-docker-playground
 
-bin/sandbox.sh spark start
+bin/playground.sh spark start
 ```
 
 ### Verify containers are up and running
@@ -90,7 +89,7 @@ docker ps
 ### Stopping
 
 ```bash
-bin/sandbox.sh spark start
+bin/playground.sh spark stop
 ```
 
 ## Usage examples
@@ -134,8 +133,10 @@ hadoop fs -ls /
 
 echo "Hello world" > test.txt
 
-sudo mv test.txt ~/datascience-sandbox/workdir
+# First, move the file into the shared folder.
+sudo mv test.txt ~/ds-playground/workdir
 
+# From there, we can load the data into Hadoop.
 hadoop fs -put /workdir/test.txt /tmp/test.txt
 
 hadoop fs -ls /tmp
