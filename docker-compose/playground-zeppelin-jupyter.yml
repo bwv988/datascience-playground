@@ -115,6 +115,7 @@ services:
         - spark-master
         - spark-worker
       container_name: jupyter
+      command: start-notebook.sh --NotebookApp.token='' # Disable security. Not recommended for production.
       env_file:
         - env/hadoop.env
       ports:
