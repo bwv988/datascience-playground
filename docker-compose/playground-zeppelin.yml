@@ -107,24 +107,6 @@ services:
       volumes_from:
         - hive
 
-    jupyter:
-      image: jupyter/all-spark-notebook
-      depends_on:
-        - namenode
-        - datanode1
-        - spark-master
-        - spark-worker
-      container_name: jupyter
-      command: start-notebook.sh --NotebookApp.token='' # Disable security. Not recommended for production.
-      env_file:
-        - env/hadoop.env
-      ports:
-        - "8888:8888"
-      volumes:
-        - ~/ds-playground/workdir/:/workdir
-      volumes_from:
-        - hive
-
 volumes:
     spark-master:
     hive:

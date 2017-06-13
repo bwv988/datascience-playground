@@ -3,17 +3,12 @@
 
 # FIXME: This needs further work and documentation.
 
-# Get lsb functions
-# FIXME: Dependency on LSB. Doesn't work on Windows, should be removed.
-. /lib/lsb/init-functions
-
-
 COMPOSE_ROOT="docker-compose"
 
 function usage {
 echo -e "\n\nUsage: ./playground <FLAVOUR> <ACTION>
 
-FLAVOUR:  {ds (default), spark}
+FLAVOUR:  {ds (default), dsj, spark}
 ACTION    {start, stop}
 
 Example: ./playground start\n"
@@ -24,6 +19,7 @@ exit
 # FIXME: Re-factor ugly script code.
 flavour=""
 action=""
+
 if [ "$#" -eq 1 ]
 then
   flavour="ds"
@@ -38,9 +34,13 @@ fi
 
 case "$flavour" in
   ds)
-    FLAVOR_MSG="Zeppelin + Jupyter + big data stack"
-    COMPOSE_FILE="playground-zeppelin-jupyter.yml"
+    FLAVOR_MSG="Zeppelin + Big Data stack"
+    COMPOSE_FILE="playground-zeppelin.yml"
     ;;
+  dsj)
+      FLAVOR_MSG="Zeppelin + Jupyter + Big Data stack"
+      COMPOSE_FILE="playground-zeppelin-jupyter.yml"
+      ;;
   spark)
     FLAVOR_MSG="Spark + Hive + Hadoop"
     COMPOSE_FILE="playground-spark.yml"
@@ -56,16 +56,16 @@ COMPOSE_CMD="docker-compose -f ${COMPOSE_PATH}"
 
 case "$action" in
   start)
-    log_begin_msg "Starting ${FLAVOR_MSG}..."
+    echo -e "Starting ${FLAVOR_MSG}..."
     exec ${COMPOSE_CMD} up
-    log_end_msg $?
+    echo -e $?
     ;;
   stop)
-    log_begin_msg "Stopping ${FLAVOR_MSG}..."
+    echo -e "Stopping ${FLAVOR_MSG}..."
     exec ${COMPOSE_CMD} down
-    log_end_msg $?
+    echo -e $?
     ;;
   *)
-    echo "Unknown action: $action, exiting."
+    echo -e "Unknown action: $action, exiting."
     usage
 esac

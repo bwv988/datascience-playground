@@ -44,17 +44,7 @@ bin/playground.sh stop
 
 ### Link Zeppelin with Hive
 
-In order to access Hive from Zeppelin, some properties and dependencies have to be configured in the JDBC interpreter group.
-
-The below is currently a work-around to inject Hive-related config into Zeppelin **after** it has been started, by PUTting config details into the Zeppelin's interpreter REST API.
-
-So, after the playground has fully started and Zeppelin is up and running, execute the following command:
-
-```bash
-docker exec -it zeppelin bash
-
-/entrypoints/inject_hive_cfg.py
-```
+**FIXME:** Add paragraph to describe how to dynamically add interpreter settings.
 
 ### General troubleshooting
 
