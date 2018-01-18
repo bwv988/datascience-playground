@@ -8,7 +8,7 @@ COMPOSE_ROOT="docker-compose"
 function usage {
 echo -e "\n\nUsage: ./playground <FLAVOUR> <ACTION>
 
-FLAVOUR:  {ds (default), dsj, spark}
+FLAVOUR:  {ds (default), dsj, spark, dsdb}
 ACTION    {start, stop}
 
 Example: ./playground start\n"
@@ -36,6 +36,10 @@ case "$flavour" in
   ds)
     FLAVOR_MSG="Zeppelin + Big Data stack"
     COMPOSE_FILE="playground-zeppelin.yml"
+    ;;
+  dsdb)
+    FLAVOR_MSG="Zeppelin + Big Data stack + MariaDB"
+    COMPOSE_FILE="playground-zeppelin-db.yml"
     ;;
   dsj)
       FLAVOR_MSG="Zeppelin + Jupyter + Big Data stack"
